@@ -43,7 +43,12 @@ class HomeController implements ControllerProviderInterface
      */
     public function indexAction(Application $app, Request $request)
     {
+        $token = $app['security.token_storage']->getToken();
 
+        if ($token) {
+            $user = $token->getUser();
+            echo 'Witaj ' . $user->getUsername();
+        }
 
         return $app['twig']->render('base.html.twig');
     }

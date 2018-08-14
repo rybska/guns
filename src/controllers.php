@@ -7,7 +7,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Controller\HelloController;
 use Controller\HomeController;
-use Controller\RegisterController;
+use Controller\GunsController;
+use Controller\AuthController;
 
 //Request::setTrustedProxies(array('127.0.0.1'));
 
@@ -39,4 +40,5 @@ $app->error(function (\Exception $e, Request $request, $code) use ($app) {
 
 
 $app->mount('/hello', new HelloController());
-$app->mount('/register', new RegisterController());
+$app->mount('/guns', new GunsController());
+$app->mount('/auth', new AuthController());

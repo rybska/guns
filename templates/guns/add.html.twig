@@ -1,9 +1,9 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-    Rejstracja
+    Dodawanie broni
 
-    <form action="{{ url('register') }}" method="post">
+    <form action="{{ url('guns') }}" method="post">
             {{ form_label(form) }}
             {{ form_widget(form) }}
             {{ form_errors(form) }}
