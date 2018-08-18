@@ -1,23 +1,11 @@
-{#{% extends "base.html.twig" %}#}
-
-{#{% block body %}#}
-    {#Rejstracja#}
-
-    {#<form action="{{ url('auth_register') }}" method="post">#}
-            {#{{ form_label(form) }}#}
-            {#{{ form_widget(form) }}#}
-            {#{{ form_errors(form) }}#}
-    {#</form>#}
-{#{% endblock %}#}
-
 
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'title.auth_login'|trans }}{% endblock %}
+{% block title %}{{ 'title.auth_register'|trans }}{% endblock %}
 
 {% block body %}
     {% form_theme form with ['bootstrap_3_horizontal_layout.html.twig', 'form/form_errors.html.twig'] %}
-    <h1>{{ 'title.auth_login'|trans }}</h1>
+    <h1>{{ 'title.auth_register'|trans }}</h1>
 
     {% if error is defined and error|length %}
         {% include 'default/_single_alert_message.html.twig' with {

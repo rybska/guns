@@ -1,7 +1,6 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: bartek
  * Date: 03.08.18
  * Time: 12:55
  */
@@ -12,69 +11,40 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 
 class RegisterForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        return $builder->add(
-            'login',
-            'text',
-            array(
-                'constraints' => array(
-                    new Assert\NotBlank(),
-                    new Assert\Length(array('min' => 5, 'max' => 16))
-                ),
-                'attr' => array(
-                    'class' => 'form-control',
-                    'placeholder' => 'Login'
-                )
-            )
-        )
-            ->add(
-                'password',
-                'repeated',
-                array(
-                    'type' => 'password',
-                    'invalid_message' => 'The password fields must match.',
-                    'options' => array(),
-                    'required' => true,
-                    'constraints' => array(
-                        new Assert\NotBlank(),
-                        new Assert\Length(array('min' => 8))
-                    ),
-                    'first_options'  => array(
-                        'label' => 'Password',
-                        'attr' => array(
-                            'class' => 'form-control',
-                            'placeholder' => 'Password'
-                        )
-                    ),
-                    'second_options' => array(
-                        'label' => 'Repeat',
-                        'attr' => array(
-                            'class' => 'form-control',
-                            'placeholder' => 'Repeat Password'
-                        )
-                    ),
-                )
-            );
+        return $builder
+            ->add('name', TextType::class, array(
+                'constraints' => new Assert\NotBlank()
+            ))
+            ->add('surname', TextType::class, array(
+                'constraints' => new Assert\NotBlank()
+            ))
+            ->add('address', TextType::class, array(
+                'constraints' => new Assert\NotBlank()
+            ))
+            ->add('login', TextType::class, array(
+                'constraints' => new Assert\Email(),
+                'label' => 'Email'
+            ))
+            ->add('phone', TextType::class, array(
+                'constraints' => new Assert\NotBlank()
+            ))
+            ->add('password', PasswordType::class, array())
+            ->add('submit', SubmitType::class, [
+                'label' => 'Save',
+            ]);
     }
 
-    /**
-     * Gets form name.
-     *
-     * @access public
-     *
-     * @return string
-     */
-    public function getName()
+    public function getBlockPrefix()
     {
-        return 'register';
-    }
-
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
+        return 'register_type';
     }
 }

@@ -2,18 +2,11 @@
 
 namespace Controller;
 
+use Form\GunsAddForm;
+use Repository\DictionaryRepository;
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
-use Form\RegisterForm;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-
 
 class GunsController implements ControllerProviderInterface
 {
@@ -53,51 +46,17 @@ class GunsController implements ControllerProviderInterface
     public function indexAction(Application $app, Request $request)
     {
         $conn = $app['db'];
-        $query = 'SELECT * FROM `lock_types`';
-        $statement = $conn->prepare($query);
-        $statement->execute();
-        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        dump($result);
-//        $conn->insert('users', $data);
+        $dictionary = new DictionaryRepository($app['db']);
 
-        $form = $app['form.factory']->createBuilder(FormType::class)
-            ->add('name', TextType::class, array(
-                'constraints' => new Assert\NotBlank(),
-                'label' => 'Name'
-            ))
-            ->add('is_blackpowder', CheckboxType::class, array(
-                'required' => false,
-                'label' => 'Is your weapon blackpowder?'
-            ))
-            ->add('ammunition_type', CheckboxType::class, array(
-                'required' => false,
-                'label' => 'Ammunition type'
-            ))
-            ->add('gun_type', CheckboxType::class, array(
-                'required' => false,
-                'label' => 'Gun type'
-            ))
-            ->add('reload_type', CheckboxType::class, array(
-                'required' => false,
-                'label' => 'Reload type'
-            ))
-            ->add('lock_type', TextType::class, array(
-                'constraints' => new Assert\NotBlank(),
-                'label' => 'Lock type'
-            ))
-            ->add('caliber',NumberType::class, array(
-                'constraints' => new Assert\NotBlank(),
-                'label' => 'Caliber'
-            ))
-            ->add('permission', CheckboxType::class, array(
-                'required' => false,
-                'label' => 'Is permission needed for your weapon?'
-            ))
-            ->add('submit', SubmitType::class, [
-                'label' => 'Save',
-            ])
-            ->getForm();
-
+        $form = $app['form.factory']->createBuilder(GunsAddForm::class, [],[
+            'dictionary' => [
+                'lockTypes' =>$dictionary->getLockTypes(),
+                'ammunitionTypes' => $dictionary->getAmmuntionTypes(),
+                'caliberTypes' => $dictionary->getCaliberTypes(),
+                'gunTypes' => $dictionary->getGunTypes(),
+                'reloadTypes' => $dictionary->getReloadTypes(),
+            ]
+        ])->getForm();
 
         $form->handleRequest($request);
 

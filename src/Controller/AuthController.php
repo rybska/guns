@@ -6,15 +6,11 @@
 namespace Controller;
 
 use Form\LoginType;
+use Form\RegisterForm;
 use Silex\Application;
 use Silex\Api\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 /**
  * Class AuthController.
@@ -33,6 +29,7 @@ class AuthController implements ControllerProviderInterface
         $controller->get('logout', [$this, 'logoutAction'])
             ->bind('auth_logout');
         $controller->get('register', [$this, 'registerAction'])
+            ->method('GET|POST')
             ->bind('auth_register');
 
         return $controller;
@@ -77,34 +74,12 @@ class AuthController implements ControllerProviderInterface
 
     public function registerAction(Application $app, Request $request)
     {
-        $form = $app['form.factory']->createBuilder(FormType::class)
-            ->add('name', TextType::class, array(
-                'constraints' => new Assert\NotBlank()
-            ))
-            ->add('surname', TextType::class, array(
-                'constraints' => new Assert\NotBlank()
-            ))
-            ->add('address', TextType::class, array(
-                'constraints' => new Assert\NotBlank()
-            ))
-            ->add('email', TextType::class, array(
-                'constraints' => new Assert\Email()
-            ))
-            ->add('phone', TextType::class, array(
-                'constraints' => new Assert\NotBlank()
-            ))
-            ->add('password', PasswordType::class, array())
-            ->add('submit', SubmitType::class, [
-                'label' => 'Save',
-            ])
-            ->getForm();
-
-
+        $form = $app['form.factory']->createBuilder(RegisterForm::class)->getForm();
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $data = $form->getData();
-            $data['password'] = $app['security.encoder.digest']->encodePassword($data['password'], '');
+            $data['password'] = $app['security.encoder.bcrypt']->encodePassword($data['password'], '');
             $data['role_id'] = 1;
             $conn = $app['db'];
             $conn->insert('users', $data);
